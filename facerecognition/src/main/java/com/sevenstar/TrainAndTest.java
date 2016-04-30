@@ -28,10 +28,11 @@ public class TrainAndTest {
     MultiLayerConfiguration.Builder builder;
     MultiLayerConfiguration conf;
     MultiLayerNetwork model;
-    DataSetIterator iter;
+    DataSetIterator iter, trainiter, testiter;
     int splitTrainNum;
     int seed;
     int outputNum;
+    int epoch;
     List<INDArray> testInput;
     List<INDArray> testLabels;
 
@@ -47,15 +48,65 @@ public class TrainAndTest {
 
     }
 
-    public void training(){
+    public TrainAndTest(Models mod, DataSetIterator trainIter, DataSetIterator testIter){
+        seed = mod.seed;
+        outputNum=mod.outputNum;
+        builder=mod.builder;
+        conf = mod.conf;
+        model = mod.model;
+        trainiter=trainIter;
+        testiter=testIter;
+        epoch=mod.nEpochs;
+    }
+
+public void training() { // use this method when train and test dataset are seperated beforehand, otherwise use train
+    Nd4j.ENFORCE_NUMERICAL_STABILITY = true;
+    model.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
+    System.out.println("training");
+    // Training
+    for (int i = 0; i < epoch; i++) {
+            trainiter.reset();
+        while (trainiter.hasNext()) {
+            DataSet next = trainiter.next();//load next batch
+            //next.shuffle();
+            next.normalizeZeroMeanZeroUnitVariance();
+            System.out.println(next.numExamples() + " " + next.numInputs() + " " + next.numOutcomes());
+            System.out.println(next.getLabels());
+            model.fit(next);
+        }
+
+    }
+}
+
+public void testing(){// use this method when train and test dataset are seperated beforehand, otherwise use test
+
+    log.info("Evaluate model....");
+    testiter.reset();
+    Evaluation eval = new Evaluation();
+    while(testiter.hasNext()){
+   //     int total = testiter.totalExamples();
+       // DataSet next = testiter.next(total);
+        DataSet next = testiter.next();
+        next.shuffle();
+        INDArray predict2 = model.output(next.getFeatureMatrix());
+        for (int i = 0; i < predict2.rows(); i++) {
+            String actual = next.getLabels().getRow(i).toString().trim();
+            String predicted = predict2.getRow(i).toString().trim();
+            log.info("actual " + actual + " vs predicted " + predicted);
+        }
+        eval.eval(next.getLabels(), predict2);
+        log.info(eval.stats());
+    }
+
+}
+
+    public void train(){
+
         Nd4j.ENFORCE_NUMERICAL_STABILITY = true;
-
         model.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
-
         System.out.println("train");
         testInput = new ArrayList<INDArray>();
         testLabels =new ArrayList<INDArray>();
-
 
         // Training
         while(iter.hasNext()){
@@ -64,7 +115,6 @@ public class TrainAndTest {
             next.normalizeZeroMeanZeroUnitVariance();
             System.out.println(next.numExamples() + " " + next.numInputs() + " " + next.numOutcomes());
             System.out.println(next.getLabels());
-
             SplitTestAndTrain testAndTrain = next.splitTestAndTrain(splitTrainNum, new Random(seed));
             DataSet train = testAndTrain.getTrain();
             testInput.add(testAndTrain.getTest().getFeatureMatrix());

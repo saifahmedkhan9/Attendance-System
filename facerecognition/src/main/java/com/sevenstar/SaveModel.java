@@ -12,6 +12,7 @@ import java.io.IOException;
 /**
  * Created by ahsan on 29/4/16.
  */
+
 public class SaveModel {
 
     MultiLayerNetwork model;
@@ -31,13 +32,14 @@ public class SaveModel {
             //Write the network configuration:
             FileUtils.write(new File("conf.yaml"), model.conf().toYaml());
             FileUtils.write(new File("conf.json"), model.conf().toJson());
-
         }
+
         catch (IOException e)
         {
             e.printStackTrace();
             System.exit(0);
         }
+
 
      /*   //Write the network parameters:
        OutputStream fos = Files.newOutputStream(Paths.get("coefficients.bin"));
