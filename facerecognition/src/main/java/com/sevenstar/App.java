@@ -16,21 +16,37 @@ public class App
     public static void main( String[] args )
 
     {
+
         LoadDataset ld = new LoadDataset();
-        DataSetIterator iter = ld.getDatasetIterator();
+       // DataSetIterator iter = ld.getDatasetIterator();
+
+        //when training and testing dataset are seperated in advance
+        DataSetIterator trainiter = ld.getTrainDatasetIterator();
+        DataSetIterator testiter = ld.getTestDatasetIterator();
 
         Models model = new Models(ld);
         model.lenet();
         model.build();
 
-        TrainAndTest tat = new TrainAndTest(model,iter);
+        //TrainAndTest tat = new TrainAndTest(model,iter);
+        //tat.train();
+        //tat.test();
+        //when training and testing dataset are seperated in advance
+
+        TrainAndTest tat = new TrainAndTest(model, trainiter, testiter);
         tat.training();
-        tat.test();
+        tat.testing();
 
         SaveModel sm = new SaveModel(tat);
         sm.save();
-       // LoadModel lm = new LoadModel();
-       // MultiLayerNetwork savedNetwork = lm.load();
+
+/*
+        LoadModel lm = new LoadModel();
+        MultiLayerNetwork savedNetwork = lm.load();
+       test t = new test(savedNetwork, testiter);
+        t.testing();
+*/
+
 
 
     }
