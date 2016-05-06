@@ -43,10 +43,10 @@ public class LoadDataset {
         nChannels = 3;
         width=32;
         height=32;
-        outputNum = 4;
-        batchSize = 20;
-        nEpochs = 20;
-        iterations = 3;
+        outputNum = 10;
+        batchSize = 100;
+        nEpochs = 3;
+        iterations =1;
         seed = 123;
         splitTrainNum = (int) (batchSize * .8);
         listenerFreq = iterations / 5;
@@ -70,7 +70,7 @@ public DataSetIterator getTrainDatasetIterator(){
 
     public DataSetIterator getTestDatasetIterator(){
         // Set path to the labeled images
-        labeledPath = System.getProperty("user.home") + "/DL4J/dl4j_egs/faceScrub/testset";
+        labeledPath = System.getProperty("user.home") + "/DL4J/dl4j_egs/faceScrub/test";
         System.out.println(labeledPath);
         //create array of strings called labels
         labels = new ArrayList<String>();
