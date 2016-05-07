@@ -36,7 +36,7 @@ public class TrainAndTest {
     List<INDArray> testInput;
     List<INDArray> testLabels;
 
-
+/*
     public TrainAndTest(Models mod, DataSetIterator it){
         splitTrainNum=mod.splitTrainNum;
         seed = mod.seed;
@@ -48,16 +48,39 @@ public class TrainAndTest {
 
     }
 
-    public TrainAndTest(Models mod, DataSetIterator trainIter, DataSetIterator testIter){
+public TrainAndTest(Models mod, DataSetIterator trainIter, DataSetIterator testIter){
+    seed = mod.seed;
+    outputNum=mod.outputNum;
+    builder=mod.builder;
+    conf = mod.conf;
+    model = mod.model;
+    trainiter=trainIter;
+    testiter=testIter;
+    epoch=mod.nEpochs;
+}
+*/
+
+    public TrainAndTest(Models mod, DataSetIterator trainIter){
         seed = mod.seed;
         outputNum=mod.outputNum;
         builder=mod.builder;
         conf = mod.conf;
         model = mod.model;
         trainiter=trainIter;
-        testiter=testIter;
         epoch=mod.nEpochs;
     }
+
+    // resume training after certain epoch
+    public TrainAndTest(MultiLayerNetwork savedModel, DataSetIterator trainIter, LoadDataset ld){
+        seed = ld.seed;
+        outputNum=ld.outputNum;
+        epoch=ld.nEpochs;
+
+        model = savedModel;
+        trainiter=trainIter;
+
+    }
+
 
 public void training() { // use this method when train and test dataset are seperated beforehand, otherwise use train
     Nd4j.ENFORCE_NUMERICAL_STABILITY = true;
@@ -77,6 +100,10 @@ public void training() { // use this method when train and test dataset are sepe
 
     }
 }
+
+
+
+/*
 
 public void testing(){// use this method when train and test dataset are seperated beforehand, otherwise use test
 
@@ -146,12 +173,7 @@ public void testing(){// use this method when train and test dataset are seperat
 
     }
 
-
-
-
-
-
-
+*/
 
 
 }

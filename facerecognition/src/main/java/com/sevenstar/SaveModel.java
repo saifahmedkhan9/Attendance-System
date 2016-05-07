@@ -4,10 +4,11 @@ import org.apache.commons.io.FileUtils;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.linalg.factory.Nd4j;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+//import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 
 /**
  * Created by ahsan on 29/4/16.
@@ -55,5 +56,23 @@ public class SaveModel {
     }
 
 
+    public void save2() {
 
-}
+        try {
+            OutputStream fos = Files.newOutputStream(Paths.get("newimagemodel.bin"));
+            DataOutputStream dos = new DataOutputStream(fos);
+            Nd4j.write(model.params(), dos);
+            dos.flush();
+            dos.close();
+            //Write the network configuration:
+
+            FileUtils.writeStringToFile(new File("conf.json"), model.getLayerWiseConfigurations().toJson());
+        }
+        catch(Exception e){
+
+        }
+    }
+
+
+
+    }
